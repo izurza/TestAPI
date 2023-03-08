@@ -1,20 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
+using TestAPI;
+using TestAPI.Funciones;
 using TestAPI.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var dbConfig = builder.Configuration.GetSection("Database").Get<DatabaseSettings>();
-string _connectionString = dbConfig.ConnectionString;
-string _connectionString = builder.Configuration.U;
-Console.WriteLine("Hola");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
-//builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-builder.Services.AddDbContext<TodoContext>(opt => opt.UseSqlServer("Data Source=DESKTOP-5D225VS;Initial Catalog=Test;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False" ?? throw new Exception("Missing Connection String")));
-builder.Services.AddDbContext<TodoContext>(opt => opt.UseSqlServer(_connectionString ?? throw new Exception("Missing Connection String")));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.EmailConf));
+builder.Services.AddSingleton<MailRender>();
+builder.Services.AddSingleton<MailSender>();
+builder.Services.AddDbContext<TodoContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DBLocal")));
+builder.Services.AddAutoMapper(typeof(MapperProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -12,4 +12,7 @@ public partial class TodoItem
     public bool IsComplete { get; set; }
 
     public string? Secret { get; set; }
+
+    public byte[]? Image { get; set; }
+    
 }
